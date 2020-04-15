@@ -1,108 +1,113 @@
 <?php
+
 namespace ElementorSuperCat\Widgets;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
-* Elementor Post Filter
-*
-* Elementor widget for Post Filter.
-*/
-class Post_Filter extends \Elementor\Widget_Base {
+ * Elementor Post Filter
+ *
+ * Elementor widget for Post Filter.
+ */
+class Post_Filter extends \Elementor\Widget_Base
+{
 
     /**
-    * Retrieve the widget name.
-    *
-    * @access public
-    *
-    * @return string Widget name.
-    */
-    public function get_name() {
+     * Retrieve the widget name.
+     *
+     * @access public
+     *
+     * @return string Widget name.
+     */
+    public function get_name()
+    {
         return 'post-filter';
     }
 
     /**
-    * Retrieve the widget title.
-    *
-    * @access public
-    *
-    * @return string Widget title.
-    */
-    public function get_title() {
-        return __( 'Post Filter Bar', 'elementor-super-cat' );
+     * Retrieve the widget title.
+     *g
+     * @access public
+     *
+     * @return string Widget title.
+     */
+    public function get_title()
+    {
+        return __('Post Filter Bar', 'elementor-super-cat');
     }
 
     /**
-    * Retrieve the widget icon.
-    *
-    * @access public
-    *
-    * @return string Widget icon.
-    */
-    public function get_icon() {
+     * Retrieve the widget icon.
+     *
+     * @access public
+     *
+     * @return string Widget icon.
+     */
+    public function get_icon()
+    {
         return 'fa fa-filter';
     }
 
     /**
-    * Retrieve the list of categories the widget belongs to.
-    *
-    * Used to determine where to display the widget in the editor.
-    *
-    * Note that currently Elementor supports only one category.
-    * When multiple categories passed, Elementor uses the first one.
-    *
-    * @access public
-    *
-    * @return array Widget categories.
-    */
-    public function get_categories() {
-        return [ 'super-cat' ];
+     * Retrieve the list of categories the widget belongs to.
+     *
+     * Used to determine where to display the widget in the editor.
+     *
+     * Note that currently Elementor supports only one category.
+     * When multiple categories passed, Elementor uses the first one.
+     *
+     * @access public
+     *
+     * @return array Widget categories.
+     */
+    public function get_categories()
+    {
+        return ['super-cat'];
     }
 
     /**
-    * Retrieve the list of scripts the widget depended on.
-    *
-    * Used to set scripts dependencies required to run the widget.
-    *
-    * @access public
-    *
-    * @return array Widget scripts dependencies.
-    */
-    public function get_script_depends() {
-        return [ 'elementor-super-cat' ];
-    }
+     * Retrieve the list of scripts the widget depended on.
+     *
+     * Used to set scripts dependencies required to run the widget.
+     *
+     * @access public
+     *
+     * @return array Widget scripts dependencies.
+     */
 
     /**
-    * Register the widget controls.
-    *
-    * Adds different input fields to allow the user to change and customize the widget settings.
-    *
-    * @access protected
-    */
-    protected function _register_controls() {
+     * Register the widget controls.
+     *
+     * Adds different input fields to allow the user to change and customize the widget settings.
+     *
+     * @access protected
+     */
+    protected function _register_controls()
+    {
 
         $this->start_controls_section(
             'section_content',
             [
-                'label' => __( 'Content', 'elementor-super-cat' ),
+                'label' => __('Content', 'elementor-super-cat'),
             ]
         );
+
 
         $this->add_control(
             'taxonomy',
             [
-                'label' => __( 'Name of taxonomy to filter', 'elementor-super-cat' ),
+                'label' => __('Name of taxonomy to filter', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::SELECT2,
                 'label_block' => true,
                 'options' => $this->get_taxonomies(),
-                'default' => $this->get_taxonomies()[0]
+                'default' => isset($this->get_taxonomies()[0]) ? $this->get_taxonomies()[0] : []
             ]
         );
 
         $this->add_control(
             'post_id',
             [
-                'label' => __( 'CSS ID of the post widget', 'elementor-super-cat' ),
+                'label' => __('CSS ID of the post widget', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::TEXT,
             ]
         );
@@ -110,12 +115,12 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'order_by',
             [
-                'label' => __( 'Order By', 'elementor-super-cat' ),
+                'label' => __('Order By', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::SELECT,
                 'default' => 'name',
                 'options' => [
-                    'name'  => __( 'Name', 'elementor-super-cat' ),
-                    'slug' => __( 'Slug', 'elementor-super-cat' ),
+                    'name'  => __('Name', 'elementor-super-cat'),
+                    'slug' => __('Slug', 'elementor-super-cat'),
                 ],
             ]
         );
@@ -123,7 +128,7 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'all_text',
             [
-                'label' => __( 'Text to show for <b>Show All</b>', 'elementor-super-cat' ),
+                'label' => __('Text to show for <b>Show All</b>', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => "all"
             ]
@@ -132,9 +137,19 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'hide_empty',
             [
-                'label' => __( 'Hide empty', 'elementor' ),
+                'label' => __('Hide empty', 'elementor'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
-                'description' => __( 'If ON empty filters will be hidden.', 'elementor' ),
+                'description' => __('If ON empty filters will be hidden.', 'elementor'),
+            ]
+        );
+
+
+        $this->add_control(
+            'invisible_filter',
+            [
+                'label' => __('Remove Filter and display only currenct taxonomy', 'elementor-super-cat'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'description' => __('Removes the filter bar and only display related single related taxonomy', 'elementor'),
             ]
         );
 
@@ -144,7 +159,7 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->start_controls_section(
             'section_style',
             [
-                'label' => __( 'Style', 'elementor-super-cat' ),
+                'label' => __('Style', 'elementor-super-cat'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
@@ -152,7 +167,7 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'color_filter',
             [
-                'label' => __( 'Color', 'elementor-super-cat' ),
+                'label' => __('Color', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .elementor-portfolio__filter' => 'color: {{VALUE}}',
@@ -163,7 +178,7 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'color_filter_active',
             [
-                'label' => __( 'Active Color', 'elementor-super-cat' ),
+                'label' => __('Active Color', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .elementor-portfolio__filter.elementor-active' => 'color: {{VALUE}};',
@@ -182,7 +197,7 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'filter_item_spacing',
             [
-                'label' => __( 'Space Between', 'elementor-super-cat' ),
+                'label' => __('Space Between', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'default' => [
                     'size' => 10,
@@ -203,7 +218,7 @@ class Post_Filter extends \Elementor\Widget_Base {
         $this->add_control(
             'filter_spacing',
             [
-                'label' => __( 'Spacing', 'elementor-super-cat' ),
+                'label' => __('Spacing', 'elementor-super-cat'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'default' => [
                     'size' => 10,
@@ -221,50 +236,60 @@ class Post_Filter extends \Elementor\Widget_Base {
         );
 
         $this->end_controls_section();
-
-
     }
 
 
-    protected function get_taxonomies() {
-        $taxonomies = get_taxonomies( [ 'show_in_nav_menus' => true ], 'objects' );
+    protected function get_taxonomies()
+    {
+        $taxonomies = get_taxonomies(['show_in_nav_menus' => true], 'objects');
 
-        $options = [ '' => '' ];
+        $options = ['' => ''];
 
-        foreach ( $taxonomies as $taxonomy ) {
-            $options[ $taxonomy->name ] = $taxonomy->label;
+        foreach ($taxonomies as $taxonomy) {
+            $options[$taxonomy->name] = $taxonomy->label;
         }
 
         return $options;
     }
 
 
+    function is_rtl($string)
+    {
+        $rtl_chars_pattern = '/[\x{0590}-\x{05ff}\x{0600}-\x{06ff}]/u';
+        return preg_match($rtl_chars_pattern, $string);
+    }
 
     /**
-    * Render the widget output on the frontend.
-    *
-    * Written in PHP and used to generate the final HTML.
-    *
-    * @access protected
-    */
-    protected function render() {
+     * Render the widget output on the frontend.
+     *
+     * Written in PHP and used to generate the final HTML.
+     *
+     * @access protected
+     */
+    protected function render()
+    {
         wp_enqueue_script('post-filter-js');
 
         $settings = $this->get_settings_for_display();
-        $filtererId = 'filter-' . $settings['taxonomy_name'] . "-" . $this->get_id();
-
-
+        $tax_name = "000";
+        if (array_key_exists('taxonomy_name', $settings)) {
+            $tax_name = $settings['taxonomy_name'];
+        }
+        $filtererId = 'filter-' . $tax_name . "-" . $this->get_id();
         $phpTax = $settings['taxonomy'];
         $jsTax = $settings['taxonomy'];
-        if($jsTax == "post_tag"){
+        if ($jsTax == "post_tag") {
             $jsTax = "tag";
         }
-
-
-        $terms = get_terms( $phpTax, array( 'hide_empty' => true ) );
-
-        if($settings['order_by'] == "slug"){
-            usort($terms, function($a, $b){
+        $terms = get_terms($phpTax, array('hide_empty' => true));
+        $invisible_filter = "";
+        if (($settings['invisible_filter'] == 'yes') == 1) {
+            //get current post same data
+            $terms = wp_get_post_terms(get_the_ID(), $phpTax);
+            $invisible_filter = 'data-invisible-filter="yes"';
+        }
+        if ($settings['order_by'] == "slug") {
+            usort($terms, function ($a, $b) {
                 return $a->slug <=> $b->slug;
             });
         }
@@ -274,44 +299,45 @@ class Post_Filter extends \Elementor\Widget_Base {
         $placeholder = '<li
         class="super-cat-post-filter elementor-portfolio__filter elementor-active"
         data-term=""
-        data-container="'.$filtererId.'"
-        data-posts="'.$settings['post_id'].'">
-        '. __($settings['all_text'], 'elementor-super-cat').'
+        data-container="' . $filtererId . '"
+        data-posts="' . $settings['post_id'] . '">
+        ' . __($settings['all_text'], 'elementor-super-cat') . '
         </li>';
         foreach ($terms as $k => $v) {
-
-          	$slug = (preg_match("/\p{Hebrew}/u", urldecode($v->slug))?$v->term_id : $v->slug);
+            $slug = (preg_match("/\p{Hebrew}/u", urldecode($v->slug)) ? $v->term_id : $v->slug);
             $li[] = '<li
+            ' . $invisible_filter . '
             class="super-cat-post-filter elementor-portfolio__filter"
-            data-term="'.$jsTax."-".$slug .'"
-            data-container="'.$filtererId.'"
-            data-posts="'.$settings['post_id'].'">
-            '.$v->name.'
+            data-term="' . $jsTax . "-" . $slug . '"
+            data-container="' . $filtererId . '"
+            data-posts="' . $settings['post_id'] . '">
+            ' . $v->name . '
             </li>';
         }
 
-        ?>
+?>
 
         <div>
-            <ul class="elementor-portfolio__filters cat-filter-for-<?php echo $settings['post_id']; ?>" id="<?php echo $filtererId; ?>" data-hide-empty="<?php echo($settings["hide_empty"]); ?>">
+            <ul class="elementor-portfolio__filters cat-filter-for-<?php echo $settings['post_id']; ?>" id="<?php echo $filtererId; ?>" data-hide-empty="<?php echo ($settings["hide_empty"]); ?>">
                 <?php echo $placeholder; ?>
-                <?php echo(implode($li)); ?>
+                <?php echo (implode($li)); ?>
             </ul>
         </div>
 
-        <?php
+    <?php
 
     }
 
     /**
-    * Render the widget output in the editor.
-    *
-    * Written as a Backbone JavaScript template and used to generate the live preview.
-    *
-    * @access protected
-    */
-    protected function _content_template() {
-        ?>
+     * Render the widget output in the editor.
+     *
+     * Written as a Backbone JavaScript template and used to generate the live preview.
+     *
+     * @access protected
+     */
+    protected function _content_template()
+    {
+    ?>
         <div>
             <ul class="elementor-portfolio__filters cat-filter-for-{{ settings.post_id }}">
                 <li class="elementor-portfolio__filter elementor-active">{{{ settings.all_text }}}</li>
@@ -319,6 +345,6 @@ class Post_Filter extends \Elementor\Widget_Base {
                 <li class="elementor-portfolio__filter">{{{ settings.taxonomy }}} 2</li>
             </ul>
         </div>
-        <?php
+<?php
     }
 }
